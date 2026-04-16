@@ -122,7 +122,7 @@ export class AttendancesService {
     }
 
     if (employeeId) {
-      queryBuilder.andWhere('employee.id = :employeeId', { employeeId });
+      queryBuilder.andWhere('employee.nip = :employeeId', { employeeId });
     }
 
     const [data, total] = await queryBuilder.getManyAndCount();
