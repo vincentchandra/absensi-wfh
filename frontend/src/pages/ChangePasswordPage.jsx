@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../api/client';
 import { AuthContext } from '../contexts/AuthContext';
-import { FiShield, FiKey, FiCheckCircle } from 'react-icons/fi';
+import { FiShield, FiKey, FiCheckCircle, FiLock } from 'react-icons/fi';
 
 const ChangePasswordPage = () => {
   const { user, updateUser } = useContext(AuthContext);
@@ -39,10 +39,8 @@ const ChangePasswordPage = () => {
         confirmPassword: formData.confirmPassword
       });
       
-      // Update local state and skip needResetPassword routing block
       updateUser({ needResetPassword: false });
 
-      // Redirect to correct dashboard
       if (user.role === 'ADMIN') {
         navigate('/admin/employees', { replace: true });
       } else {
@@ -57,83 +55,64 @@ const ChangePasswordPage = () => {
     }
   };
 
+  const inputClasses = "w-full py-3 pr-4 pl-11 bg-main border border-border rounded-md text-text-primary font-[inherit] text-[0.95rem] transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)] focus:outline-none focus:border-primary focus:shadow-[0_0_0_3px_var(--color-border-focus)] placeholder:text-text-muted";
+
   return (
-    <div className="page-container" style={{ alignItems: 'center', justifyContent: 'center' }}>
-      <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '450px', padding: '40px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '60px',
-            height: '60px',
-            borderRadius: '50%',
-            backgroundColor: 'rgba(245, 158, 11, 0.15)',
-            color: 'var(--warning-color)',
-            marginBottom: '15px'
-          }}>
+    <div className="min-h-screen flex flex-col items-center justify-center">
+      <div className="w-full max-w-[450px] p-10 bg-card backdrop-blur-[12px] border border-border shadow-main rounded-lg animate-fade-in">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-[60px] h-[60px] rounded-full bg-warning/15 text-warning mb-4">
             <FiShield size={28} />
           </div>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: '10px' }}>Ubah Password Anda</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+          <h2 className="text-[1.5rem] mb-2.5">Ubah Password Anda</h2>
+          <p className="text-text-secondary text-[0.9rem]">
             Demi keamanan, Anda diwajibkan untuk mengganti password default (sementara) sebelum mengakses aplikasi.
           </p>
         </div>
 
         {error && (
-          <div style={{
-            padding: '12px',
-            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-            borderLeft: '4px solid var(--danger-color)',
-            color: 'var(--danger-color)',
-            marginBottom: '20px',
-            borderRadius: 'var(--radius-sm)',
-            fontSize: '0.9rem'
-          }}>
+          <div className="p-3 bg-danger/10 border-l-4 border-l-danger text-danger mb-5 rounded-sm text-[0.9rem]">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">Password Lama</label>
-            <div style={{ position: 'relative' }}>
-              <FiKey style={{ position: 'absolute', top: '50%', left: '16px', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+          <div className="mb-5">
+            <label className="block mb-2 text-[0.9rem] font-medium text-text-secondary">Password Lama</label>
+            <div className="relative">
+              <FiKey className="absolute top-1/2 left-4 -translate-y-1/2 text-text-muted" />
               <input
                 type="password"
-                className="form-control"
+                className={inputClasses}
                 placeholder="Masukkan password default"
-                style={{ paddingLeft: '44px' }}
                 value={formData.oldPassword}
                 onChange={(e) => setFormData({ ...formData, oldPassword: e.target.value })}
               />
             </div>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Password Baru</label>
-            <div style={{ position: 'relative' }}>
-              <FiLockIconWrapper />
+          <div className="mb-5">
+            <label className="block mb-2 text-[0.9rem] font-medium text-text-secondary">Password Baru</label>
+            <div className="relative">
+              <FiLock className="absolute top-1/2 left-4 -translate-y-1/2 text-text-muted" />
               <input
                 type="password"
-                className="form-control"
+                className={inputClasses}
                 placeholder="Minimal 8 karakter"
-                style={{ paddingLeft: '44px' }}
                 value={formData.newPassword}
                 onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
               />
             </div>
           </div>
 
-          <div className="form-group" style={{ marginBottom: '30px' }}>
-            <label className="form-label">Konfirmasi Password Baru</label>
-            <div style={{ position: 'relative' }}>
-               <FiLockIconWrapper />
+          <div className="mb-8">
+            <label className="block mb-2 text-[0.9rem] font-medium text-text-secondary">Konfirmasi Password Baru</label>
+            <div className="relative">
+              <FiLock className="absolute top-1/2 left-4 -translate-y-1/2 text-text-muted" />
               <input
                 type="password"
-                className="form-control"
+                className={inputClasses}
                 placeholder="Ulangi password baru"
-                style={{ paddingLeft: '44px' }}
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
               />
@@ -142,8 +121,7 @@ const ChangePasswordPage = () => {
 
           <button
             type="submit"
-            className="btn-primary"
-            style={{ width: '100%', padding: '14px', backgroundColor: 'var(--warning-color)' }}
+            className="w-full py-3.5 bg-warning text-white border-none rounded-md font-medium text-[0.95rem] transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)] inline-flex items-center justify-center gap-2 shadow-[0_2px_10px_rgba(59,130,246,0.2)] hover:brightness-110 hover:-translate-y-px active:translate-y-px disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={loading}
           >
             {loading ? 'Menyimpan...' : (
@@ -157,11 +135,5 @@ const ChangePasswordPage = () => {
     </div>
   );
 };
-
-// Quick wrapper for lock icon to map the correct icon
-import { FiLock } from 'react-icons/fi';
-const FiLockIconWrapper = () => (
-    <FiLock style={{ position: 'absolute', top: '50%', left: '16px', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-);
 
 export default ChangePasswordPage;

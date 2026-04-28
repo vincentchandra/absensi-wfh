@@ -5,66 +5,23 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0, left: 0, right: 0, bottom: 0,
-      backgroundColor: 'rgba(11, 15, 25, 0.75)',
-      backdropFilter: 'blur(4px)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000,
-      padding: '20px'
-    }}>
+    <div className="fixed inset-0 bg-[rgba(11,15,25,0.75)] backdrop-blur-[4px] flex items-center justify-center z-[1000] p-5">
       <div 
-        className="glass-panel animate-fade-in"
-        style={{
-          width: '100%',
-          maxWidth: '500px',
-          maxHeight: '90vh',
-          display: 'flex',
-          flexDirection: 'column',
-          backgroundColor: 'var(--bg-card)',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
-        }}
+        className="w-full max-w-[500px] max-h-[90vh] flex flex-col bg-card rounded-lg border border-border shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] animate-fade-in"
       >
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '20px 24px',
-          borderBottom: '1px solid var(--border-color)'
-        }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 600, margin: 0 }}>{title}</h2>
+        <div className="flex justify-between items-center px-6 py-5 border-b border-border">
+          <h2 className="text-[1.25rem] font-semibold m-0">{title}</h2>
           <button 
             onClick={onClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--text-secondary)',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '4px',
-              transition: 'var(--transition)'
-            }}
-            className="close-btn"
+            className="bg-none border-none text-text-secondary cursor-pointer flex items-center justify-center p-1 transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)] hover:text-danger hover:scale-110"
           >
             <FiX size={24} />
           </button>
         </div>
 
-        <div style={{ padding: '24px', overflowY: 'auto', flex: 1 }}>
+        <div className="p-6 overflow-y-auto flex-1">
           {children}
         </div>
-        
-        <style>{`
-          .close-btn:hover {
-            color: var(--danger-color) !important;
-            transform: scale(1.1);
-          }
-        `}</style>
       </div>
     </div>
   );

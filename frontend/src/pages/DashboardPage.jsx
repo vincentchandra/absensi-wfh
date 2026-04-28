@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/id';
 import apiClient from '../api/client';
 import PhotoCapture from '../components/PhotoCapture';
-import { FiClock, FiCalendar, FiMapPin, FiCheckCircle } from 'react-icons/fi';
+import { FiClock, FiCalendar, FiMapPin, FiCheckCircle, FiLogOut, FiActivity } from 'react-icons/fi';
 
 dayjs.locale('id');
 
@@ -13,23 +13,20 @@ const DashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   
-  // Custom states for Clock In flow
   const [photo, setPhoto] = useState(null);
   const [photoConfirmed, setPhotoConfirmed] = useState(false);
   const [notes, setNotes] = useState('');
   const [error, setError] = useState('');
 
-  // Clock tick
   useEffect(() => {
     const timer = setInterval(() => setTime(dayjs()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch today status
   const fetchTodayStatus = async () => {
     try {
       const res = await apiClient.get('/attendances/today');
-      setTodayAttendance(res.data); // will be null if no clock in
+      setTodayAttendance(res.data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -85,29 +82,33 @@ const DashboardPage = () => {
   if (loading) return null;
 
   return (
-    <div className="content-wrap" style={{ paddingTop: '50px' }}>
-      <div className="page-header">
+    <div className="flex-1 py-12 px-[5%] max-w-[1400px] mx-auto w-full">
+      <div className="mb-8 flex justify-between items-center">
         <div>
-          <h1 className="page-title">Dashboard Absensi WFH</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Welcome back! Jangan lupa absen ya.</p>
+          <h1 className="text-[1.8rem] font-semibold tracking-tight">Dashboard Absensi WFH</h1>
+          <p className="text-text-secondary">Welcome back! Jangan lupa absen ya.</p>
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap' }}>
+      <div className="flex gap-8 flex-wrap">
         {/* Left Column - Live Clock & Status */}
-        <div style={{ flex: '1 1 400px' }}>
-          <div className="glass-panel animate-fade-in" style={{ padding: '30px', textAlign: 'center', marginBottom: '30px' }}>
-            <div style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', marginBottom: '10px' }}>
-              <FiCalendar style={{ marginRight: '8px' }} />
+        <div className="flex-[1_1_400px]">
+          <div className="bg-card backdrop-blur-[12px] border border-border shadow-main rounded-lg p-8 text-center mb-8 animate-fade-in">
+            <div className="text-text-secondary text-[1.2rem] mb-2.5">
+              <FiCalendar className="inline mr-2" />
               {time.format('dddd, DD MMMM YYYY')}
             </div>
-            <div style={{ fontSize: '4rem', fontWeight: 800, color: 'var(--primary-color)', lineHeight: 1, letterSpacing: '-2px' }}>
+            <div className="text-[4rem] font-extrabold text-primary leading-none tracking-[-2px]">
               {time.format('HH:mm:ss')}
             </div>
-            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '15px' }}>
-              <div style={{ padding: '10px 20px', backgroundColor: 'var(--bg-main)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Status Saat Ini</div>
-                <div style={{ fontWeight: 600, color: todayAttendance ? (todayAttendance.clockOut ? 'var(--warning-color)' : 'var(--success-color)') : 'var(--text-primary)' }}>
+            <div className="mt-5 flex justify-center gap-4">
+              <div className="px-5 py-2.5 bg-main rounded-md border border-border">
+                <div className="text-[0.8rem] text-text-secondary">Status Saat Ini</div>
+                <div className={`font-semibold ${
+                  todayAttendance 
+                    ? (todayAttendance.clockOut ? 'text-warning' : 'text-success') 
+                    : 'text-text-primary'
+                }`}>
                   {!todayAttendance && 'Belum Absen'}
                   {todayAttendance && !todayAttendance.clockOut && 'Sedang Bekerja (WFH)'}
                   {todayAttendance && todayAttendance.clockOut && 'Selesai Bekerja'}
@@ -118,36 +119,28 @@ const DashboardPage = () => {
 
           {/* Clock In / Out Records */}
           {todayAttendance && (
-             <div className="glass-panel animate-fade-in" style={{ padding: '30px', animationDelay: '0.1s' }}>
-                <h3 style={{ marginBottom: '20px', fontSize: '1.2rem' }}>Perekaman Hari Ini</h3>
+             <div className="bg-card backdrop-blur-[12px] border border-border shadow-main rounded-lg p-8 animate-fade-in [animation-delay:0.1s]">
+                <h3 className="mb-5 text-[1.2rem]">Perekaman Hari Ini</h3>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                    <div style={{ 
-                      width: '40px', height: '40px', borderRadius: '50%', 
-                      backgroundColor: 'rgba(16, 185, 129, 0.1)', color: 'var(--success-color)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center' 
-                    }}>
+                <div className="flex flex-col gap-5">
+                  <div className="flex gap-4 items-center">
+                    <div className="w-10 h-10 rounded-full bg-success/10 text-success flex items-center justify-center">
                       <FiClock size={20} />
                     </div>
                     <div>
-                      <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Jam Masuk</div>
-                      <div style={{ fontWeight: 600, fontSize: '1.1rem' }}>{todayAttendance.clockIn}</div>
+                      <div className="text-[0.9rem] text-text-secondary">Jam Masuk</div>
+                      <div className="font-semibold text-[1.1rem]">{todayAttendance.clockIn}</div>
                     </div>
                   </div>
 
                   {todayAttendance.clockOut && (
-                    <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                      <div style={{ 
-                        width: '40px', height: '40px', borderRadius: '50%', 
-                        backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger-color)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center' 
-                      }}>
+                    <div className="flex gap-4 items-center">
+                      <div className="w-10 h-10 rounded-full bg-danger/10 text-danger flex items-center justify-center">
                         <FiLogOut size={20} />
                       </div>
                       <div>
-                        <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Jam Keluar</div>
-                        <div style={{ fontWeight: 600, fontSize: '1.1rem' }}>{todayAttendance.clockOut}</div>
+                        <div className="text-[0.9rem] text-text-secondary">Jam Keluar</div>
+                        <div className="font-semibold text-[1.1rem]">{todayAttendance.clockOut}</div>
                       </div>
                     </div>
                   )}
@@ -157,20 +150,20 @@ const DashboardPage = () => {
         </div>
 
         {/* Right Column - Action Form */}
-        <div style={{ flex: '1 1 500px' }}>
-          <div className="glass-panel animate-fade-in" style={{ padding: '30px', animationDelay: '0.2s', height: '100%' }}>
+        <div className="flex-[1_1_500px]">
+          <div className="bg-card backdrop-blur-[12px] border border-border shadow-main rounded-lg p-8 h-full animate-fade-in [animation-delay:0.2s]">
             
             {!todayAttendance ? (
               // CLOCK IN FLOW
               <div>
-                <h3 style={{ marginBottom: '20px', fontSize: '1.3rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <FiMapPin color="var(--primary-color)" /> Clock In WFH
+                <h3 className="mb-5 text-[1.3rem] flex items-center gap-2.5">
+                  <FiMapPin className="text-primary" /> Clock In WFH
                 </h3>
 
-                {error && <div className="form-error" style={{ marginBottom: '15px', padding: '10px', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: '6px' }}>{error}</div>}
+                {error && <div className="text-danger text-[0.8rem] mb-4 p-2.5 bg-danger/10 rounded-sm">{error}</div>}
 
-                <div style={{ marginBottom: '25px' }}>
-                  <label className="form-label" style={{ marginBottom: '15px' }}>Foto Bukti WFH (Wajib)</label>
+                <div className="mb-6">
+                  <label className="block mb-4 text-[0.9rem] font-medium text-text-secondary">Foto Bukti WFH (Wajib)</label>
                   <PhotoCapture 
                     onPhotoTaken={(file) => {
                       setPhoto(file);
@@ -181,10 +174,10 @@ const DashboardPage = () => {
 
                 {photoConfirmed && (
                   <>
-                    <div className="form-group animate-fade-in">
-                      <label className="form-label">Catatan Kegiatan (Opsional)</label>
+                    <div className="mb-5 animate-fade-in">
+                      <label className="block mb-2 text-[0.9rem] font-medium text-text-secondary">Catatan Kegiatan (Opsional)</label>
                       <textarea
-                        className="form-control"
+                        className="w-full py-3 px-4 bg-main border border-border rounded-md text-text-primary font-[inherit] text-[0.95rem] transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)] focus:outline-none focus:border-primary focus:shadow-[0_0_0_3px_var(--color-border-focus)] placeholder:text-text-muted"
                         rows="3"
                         placeholder="Rencana kegiatan hari ini..."
                         value={notes}
@@ -193,8 +186,7 @@ const DashboardPage = () => {
                     </div>
 
                     <button 
-                      className="btn-primary animate-fade-in" 
-                      style={{ width: '100%', padding: '15px', fontSize: '1.05rem', backgroundColor: 'var(--success-color)' }}
+                      className="w-full py-4 bg-success text-white border-none rounded-md font-medium text-[1.05rem] transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)] inline-flex items-center justify-center gap-2 shadow-[0_2px_10px_rgba(59,130,246,0.2)] hover:brightness-110 hover:-translate-y-px active:translate-y-px disabled:opacity-50 disabled:cursor-not-allowed animate-fade-in"
                       onClick={handleClockIn}
                       disabled={processing}
                     >
@@ -209,25 +201,19 @@ const DashboardPage = () => {
               </div>
             ) : !todayAttendance.clockOut ? (
               // CLOCK OUT FLOW
-              <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-                <div style={{ 
-                  width: '80px', height: '80px', borderRadius: '50%', 
-                  backgroundColor: 'rgba(59, 130, 246, 0.1)', color: 'var(--primary-color)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  marginBottom: '20px' 
-                }}>
+              <div className="flex flex-col h-full justify-center items-center text-center">
+                <div className="w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-5">
                   <FiActivity size={40} />
                 </div>
-                <h3 style={{ fontSize: '1.4rem', marginBottom: '10px' }}>Waktunya Selesai Bekerja?</h3>
-                <p style={{ color: 'var(--text-secondary)', marginBottom: '30px', maxWidth: '300px' }}>
+                <h3 className="text-[1.4rem] mb-2.5">Waktunya Selesai Bekerja?</h3>
+                <p className="text-text-secondary mb-8 max-w-[300px]">
                   Pekerjaan hari ini sudah usai. Jangan lupa untuk clock-out ya.
                 </p>
 
-                {error && <div className="form-error" style={{ marginBottom: '15px' }}>{error}</div>}
+                {error && <div className="text-danger text-[0.8rem] mb-4">{error}</div>}
 
                 <button 
-                  className="btn-primary" 
-                  style={{ padding: '15px 40px', fontSize: '1.1rem', backgroundColor: 'var(--warning-color)' }}
+                  className="py-4 px-10 bg-warning text-white border-none rounded-md font-medium text-[1.1rem] transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)] inline-flex items-center justify-center gap-2 shadow-[0_2px_10px_rgba(59,130,246,0.2)] hover:brightness-110 hover:-translate-y-px active:translate-y-px disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={handleClockOut}
                   disabled={processing}
                 >
@@ -236,17 +222,12 @@ const DashboardPage = () => {
               </div>
             ) : (
                 // DONE FOR TODAY
-                <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-                <div style={{ 
-                  width: '80px', height: '80px', borderRadius: '50%', 
-                  backgroundColor: 'rgba(16, 185, 129, 0.1)', color: 'var(--success-color)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  marginBottom: '20px' 
-                }}>
+                <div className="flex flex-col h-full justify-center items-center text-center">
+                <div className="w-20 h-20 rounded-full bg-success/10 text-success flex items-center justify-center mb-5">
                   <FiCheckCircle size={40} />
                 </div>
-                <h3 style={{ fontSize: '1.4rem', marginBottom: '10px' }}>Terima Kasih!</h3>
-                <p style={{ color: 'var(--text-secondary)', maxWidth: '300px' }}>
+                <h3 className="text-[1.4rem] mb-2.5">Terima Kasih!</h3>
+                <p className="text-text-secondary max-w-[300px]">
                   Anda sudah menyelesaikan hari kerja hari ini. Selamat beristirahat!
                 </p>
               </div>
@@ -259,8 +240,5 @@ const DashboardPage = () => {
     </div>
   );
 };
-
-// Simple manual wrapper for missing icon import
-import { FiLogOut, FiActivity } from 'react-icons/fi';
 
 export default DashboardPage;

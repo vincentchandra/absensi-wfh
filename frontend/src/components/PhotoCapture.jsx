@@ -36,71 +36,41 @@ const PhotoCapture = ({ onPhotoTaken }) => {
   };
 
   return (
-    <div style={{ width: '100%' }}>
+    <div className="w-full">
       <input
         type="file"
         accept="image/*"
-        capture="environment" // Native mobile prompt
+        capture="environment"
         ref={fileInputRef}
         onChange={handleFileChange}
-        style={{ display: 'none' }}
+        className="hidden"
       />
 
       {!previewUrl ? (
         <div 
           onClick={handleCaptureClick}
-          style={{
-            border: '2px dashed var(--border-color)',
-            borderRadius: 'var(--radius-lg)',
-            padding: '40px 20px',
-            textAlign: 'center',
-            cursor: 'pointer',
-            backgroundColor: 'var(--bg-surface)',
-            transition: 'var(--transition)'
-          }}
-          className="capture-container"
+          className="border-2 border-dashed border-border rounded-lg px-5 py-10 text-center cursor-pointer bg-surface transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)] hover:border-primary hover:bg-hover"
         >
-          <div style={{
-            width: '60px', height: '60px', 
-            backgroundColor: 'var(--primary-glow)',
-            color: 'var(--primary-color)',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 15px'
-          }}>
+          <div className="w-[60px] h-[60px] bg-primary-glow text-primary rounded-full flex items-center justify-center mx-auto mb-4">
             <FiCamera size={28} />
           </div>
-          <h3 style={{ fontSize: '1.1rem', marginBottom: '8px' }}>Ambil Foto Bukti Kehadiran</h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+          <h3 className="text-[1.1rem] mb-2">Ambil Foto Bukti Kehadiran</h3>
+          <p className="text-text-secondary text-[0.9rem]">
             Klik area ini untuk mengambil foto atau memilih gambar dari perangkat Anda.
           </p>
-          
-          <style>{`
-            .capture-container:hover {
-              border-color: var(--primary-color);
-              background-color: var(--bg-hover);
-            }
-          `}</style>
         </div>
       ) : (
-        <div style={{
-          border: '1px solid var(--border-color)',
-          borderRadius: 'var(--radius-lg)',
-          overflow: 'hidden',
-          backgroundColor: 'var(--bg-card)'
-        }}>
+        <div className="border border-border rounded-lg overflow-hidden bg-card">
           <img 
             src={previewUrl} 
             alt="Preview" 
-            style={{ width: '100%', height: 'auto', maxHeight: '350px', objectFit: 'cover' }}
+            className="w-full h-auto max-h-[350px] object-cover"
           />
-          <div style={{ padding: '16px', display: 'flex', gap: '10px' }}>
-            <button className="btn-secondary" style={{ flex: 1 }} onClick={clearPhoto} type="button">
+          <div className="p-4 flex gap-2.5">
+            <button className="flex-1 bg-surface text-text-primary border border-border px-6 py-2.5 rounded-md font-medium transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-hover hover:border-text-muted inline-flex items-center justify-center gap-2" onClick={clearPhoto} type="button">
               <FiX /> Retake
             </button>
-            <button className="btn-primary" style={{ flex: 1, backgroundColor: 'var(--success-color)' }} onClick={confirmPhoto} type="button">
+            <button className="flex-1 bg-success text-white border-none px-6 py-2.5 rounded-md font-medium transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)] inline-flex items-center justify-center gap-2 shadow-[0_2px_10px_rgba(59,130,246,0.2)] hover:brightness-110 hover:-translate-y-px" onClick={confirmPhoto} type="button">
               <FiCheck /> Gunakan Foto Ini
             </button>
           </div>

@@ -5,7 +5,7 @@ const DataTable = ({ columns, data, loading, onPageChange, currentPage = 1, tota
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+      <div className="text-center p-10 text-text-secondary">
         Memuat data...
       </div>
     );
@@ -13,7 +13,7 @@ const DataTable = ({ columns, data, loading, onPageChange, currentPage = 1, tota
 
   if (!data || data.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+      <div className="text-center p-10 text-text-secondary">
         Data tidak ditemukan
       </div>
     );
@@ -21,12 +21,12 @@ const DataTable = ({ columns, data, loading, onPageChange, currentPage = 1, tota
 
   return (
     <div>
-      <div style={{ overflowX: 'auto', backgroundColor: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+      <div className="overflow-x-auto bg-card rounded-lg border border-border">
+        <table className="w-full border-collapse text-left">
           <thead>
-            <tr style={{ backgroundColor: 'var(--bg-main)', borderBottom: '1px solid var(--border-color)' }}>
+            <tr className="bg-main border-b border-border">
               {columns.map((col, index) => (
-                <th key={index} style={{ padding: '16px', fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                <th key={index} className="p-4 font-semibold text-text-secondary text-[0.9rem]">
                   {col.header}
                 </th>
               ))}
@@ -34,9 +34,9 @@ const DataTable = ({ columns, data, loading, onPageChange, currentPage = 1, tota
           </thead>
           <tbody>
             {data.map((row, rowIndex) => (
-              <tr key={rowIndex} className="table-row" style={{ borderBottom: '1px solid var(--border-color)' }}>
+              <tr key={rowIndex} className="border-b border-border last:border-b-0 hover:bg-surface transition-colors duration-200">
                 {columns.map((col, colIndex) => (
-                  <td key={colIndex} style={{ padding: '16px', fontSize: '0.95rem' }}>
+                  <td key={colIndex} className="p-4 text-[0.95rem]">
                     {col.render ? col.render(row) : row[col.accessor]}
                   </td>
                 ))}
@@ -45,34 +45,23 @@ const DataTable = ({ columns, data, loading, onPageChange, currentPage = 1, tota
           </tbody>
         </table>
       </div>
-
-      <style>{`
-        .table-row:last-child {
-          border-bottom: none;
-        }
-        .table-row:hover {
-          background-color: var(--bg-surface);
-        }
-      `}</style>
       
       {totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px', gap: '10px' }}>
+        <div className="flex justify-end mt-5 gap-2.5">
           <button 
-            className="btn-secondary" 
-            style={{ padding: '8px 12px' }}
+            className="bg-surface text-text-primary border border-border px-3 py-2 rounded-md font-medium transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-hover hover:border-text-muted disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={currentPage === 1}
             onClick={() => onPageChange(currentPage - 1)}
           >
             <FiChevronLeft size={18} /> Prev
           </button>
           
-          <div style={{ display: 'flex', alignItems: 'center', margin: '0 10px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+          <div className="flex items-center mx-2.5 text-[0.9rem] text-text-secondary">
             Page {currentPage} of {totalPages}
           </div>
 
           <button 
-            className="btn-secondary" 
-            style={{ padding: '8px 12px' }}
+            className="bg-surface text-text-primary border border-border px-3 py-2 rounded-md font-medium transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-hover hover:border-text-muted disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={currentPage === totalPages}
             onClick={() => onPageChange(currentPage + 1)}
           >

@@ -13,7 +13,7 @@ const EmployeesPage = () => {
   const limit = 10;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState('create'); // 'create' | 'edit'
+  const [modalMode, setModalMode] = useState('create');
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   
   const initialForm = { nip: '', name: '', email: '', department: '', position: '', phone: '' };
@@ -54,7 +54,7 @@ const EmployeesPage = () => {
     setModalMode('edit');
     setSelectedEmployee(employee);
     setFormData({
-      nip: employee.nip, // We cannot edit NIP according to backend DTO, but we need it here for context
+      nip: employee.nip,
       name: employee.name,
       email: employee.email,
       department: employee.department,
@@ -83,20 +83,10 @@ const EmployeesPage = () => {
 
     try {
       if (modalMode === 'create') {
-        const payload = {
-          nip: formData.nip, // Add NIP manually if they typed it
-          name: formData.name,
-          email: formData.email,
-          department: formData.department,
-          position: formData.position,
-          phone: formData.phone
-        };
-        // Backend auto-generates NIP if not provided, but since we didn't add it to form state, we rely on backend
         await apiClient.post('/employees', formData);
       } else {
-        // Edit mode
         const payload = { ...formData };
-        delete payload.nip; // remove NIP because update-employee dto doesn't permit it
+        delete payload.nip;
         await apiClient.patch(`/employees/${selectedEmployee.id}`, payload);
       }
       
@@ -109,21 +99,23 @@ const EmployeesPage = () => {
     }
   };
 
+  const inputClasses = "w-full py-3 px-4 bg-main border border-border rounded-md text-text-primary font-[inherit] text-[0.95rem] transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)] focus:outline-none focus:border-primary focus:shadow-[0_0_0_3px_var(--color-border-focus)] placeholder:text-text-muted";
+
   const columns = [
-    { header: 'NIP', accessor: 'nip', render: (row) => <span style={{ fontWeight: 600, color: 'var(--primary-color)' }}>{row.nip}</span> },
+    { header: 'NIP', accessor: 'nip', render: (row) => <span className="font-semibold text-primary">{row.nip}</span> },
     { header: 'Nama Lengkap', accessor: 'name' },
-    { header: 'Email / Username', accessor: 'email', render: (row) => <div><div>{row.email}</div><div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>user: {row.nip}</div></div> },
-    { header: 'Departemen & Posisi', accessor: 'department', render: (row) => <div><div>{row.department}</div><div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{row.position}</div></div> },
-    { header: 'Bergabung', accessor: 'created_at', render: (row) => <span style={{ color: 'var(--text-secondary)' }}>{dayjs(row.created_at).format('DD MMM YYYY')}</span> },
+    { header: 'Email / Username', accessor: 'email', render: (row) => <div><div>{row.email}</div><div className="text-[0.8rem] text-text-secondary">user: {row.nip}</div></div> },
+    { header: 'Departemen & Posisi', accessor: 'department', render: (row) => <div><div>{row.department}</div><div className="text-[0.8rem] text-text-secondary">{row.position}</div></div> },
+    { header: 'Bergabung', accessor: 'created_at', render: (row) => <span className="text-text-secondary">{dayjs(row.created_at).format('DD MMM YYYY')}</span> },
     {
       header: 'Aksi',
       accessor: 'id',
       render: (row) => (
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button className="btn-secondary" style={{ padding: '6px 10px' }} onClick={() => openEditModal(row)} title="Edit">
+        <div className="flex gap-2">
+          <button className="bg-surface text-text-primary border border-border px-2.5 py-1.5 rounded-md font-medium transition-all duration-250 hover:bg-hover hover:border-text-muted" onClick={() => openEditModal(row)} title="Edit">
             <FiEdit2 size={16} />
           </button>
-          <button className="btn-danger" style={{ padding: '6px 10px' }} onClick={() => handleDelete(row.id, row.name)} title="Hapus">
+          <button className="bg-transparent text-danger border border-danger px-2.5 py-1.5 rounded-sm transition-all duration-250 text-[0.85rem] font-medium hover:bg-danger/10 hover:shadow-[0_0_12px_rgba(239,68,68,0.2)]" onClick={() => handleDelete(row.id, row.name)} title="Hapus">
             <FiTrash2 size={16} />
           </button>
         </div>
@@ -132,21 +124,21 @@ const EmployeesPage = () => {
   ];
 
   return (
-    <div className="content-wrap">
-      <div className="page-header" style={{ marginBottom: '40px' }}>
+    <div className="flex-1 py-8 px-[5%] max-w-[1400px] mx-auto w-full">
+      <div className="mb-10 flex justify-between items-center">
         <div>
-          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <FiUsers color="var(--primary-color)" /> Manajemen Karyawan
+          <h1 className="text-[1.8rem] font-semibold tracking-tight flex items-center gap-2.5">
+            <FiUsers className="text-primary" /> Manajemen Karyawan
           </h1>
-          <p style={{ color: 'var(--text-secondary)', marginTop: '5px' }}>Kelola data karyawan dan akses login HRIS.</p>
+          <p className="text-text-secondary mt-1">Kelola data karyawan dan akses login HRIS.</p>
         </div>
         
-        <button className="btn-primary" onClick={openCreateModal}>
+        <button className="bg-primary text-white border-none px-6 py-2.5 rounded-md font-medium text-[0.95rem] transition-all duration-250 inline-flex items-center justify-center gap-2 shadow-[0_2px_10px_rgba(59,130,246,0.2)] hover:bg-primary-hover hover:shadow-glow hover:-translate-y-px active:translate-y-px" onClick={openCreateModal}>
           <FiPlus /> Tambah Karyawan
         </button>
       </div>
 
-      <div className="glass-panel animate-fade-in" style={{ padding: '30px' }}>
+      <div className="bg-card backdrop-blur-[12px] border border-border shadow-main rounded-lg p-8 animate-fade-in">
         <DataTable 
           columns={columns} 
           data={data} 
@@ -164,18 +156,18 @@ const EmployeesPage = () => {
         title={modalMode === 'create' ? 'Tambah Karyawan Baru' : 'Edit Data Karyawan'}
       >
         {formError && (
-          <div className="form-error" style={{ marginBottom: '20px', padding: '10px', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: '6px' }}>
+          <div className="text-danger text-[0.8rem] mb-5 p-2.5 bg-danger/10 rounded-sm">
             {formError}
           </div>
         )}
 
         <form onSubmit={handleFormSubmit}>
           {modalMode === 'create' && (
-            <div className="form-group">
-              <label className="form-label">NIP (Nomor Induk Pegawai)</label>
+            <div className="mb-5">
+              <label className="block mb-2 text-[0.9rem] font-medium text-text-secondary">NIP (Nomor Induk Pegawai)</label>
               <input 
                 type="text" 
-                className="form-control" 
+                className={inputClasses}
                 value={formData.nip || ''}
                 onChange={(e) => setFormData({...formData, nip: e.target.value})}
                 required
@@ -184,55 +176,55 @@ const EmployeesPage = () => {
             </div>
           )}
 
-          <div className="form-group">
-            <label className="form-label">Nama Lengkap</label>
+          <div className="mb-5">
+            <label className="block mb-2 text-[0.9rem] font-medium text-text-secondary">Nama Lengkap</label>
             <input 
               type="text" 
-              className="form-control" 
+              className={inputClasses}
               value={formData.name}
               onChange={(e) => setFormData({...formData, name: e.target.value})}
               required
             />
           </div>
 
-          <div style={{ display: 'flex', gap: '15px' }}>
-            <div className="form-group" style={{ flex: 1 }}>
-              <label className="form-label">Email</label>
+          <div className="flex gap-4">
+            <div className="mb-5 flex-1">
+              <label className="block mb-2 text-[0.9rem] font-medium text-text-secondary">Email</label>
               <input 
                 type="email" 
-                className="form-control" 
+                className={inputClasses}
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
                 required
               />
             </div>
-            <div className="form-group" style={{ flex: 1 }}>
-              <label className="form-label">Nomor HP</label>
+            <div className="mb-5 flex-1">
+              <label className="block mb-2 text-[0.9rem] font-medium text-text-secondary">Nomor HP</label>
               <input 
                 type="text" 
-                className="form-control" 
+                className={inputClasses}
                 value={formData.phone}
                 onChange={(e) => setFormData({...formData, phone: e.target.value})}
               />
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '15px' }}>
-            <div className="form-group" style={{ flex: 1 }}>
-              <label className="form-label">Departemen</label>
+          <div className="flex gap-4">
+            <div className="mb-5 flex-1">
+              <label className="block mb-2 text-[0.9rem] font-medium text-text-secondary">Departemen</label>
               <input 
                 type="text" 
-                className="form-control" 
+                className={inputClasses}
                 value={formData.department}
                 onChange={(e) => setFormData({...formData, department: e.target.value})}
                 required
               />
             </div>
-            <div className="form-group" style={{ flex: 1 }}>
-              <label className="form-label">Jabatan (Position)</label>
+            <div className="mb-5 flex-1">
+              <label className="block mb-2 text-[0.9rem] font-medium text-text-secondary">Jabatan (Position)</label>
               <input 
                 type="text" 
-                className="form-control" 
+                className={inputClasses}
                 value={formData.position}
                 onChange={(e) => setFormData({...formData, position: e.target.value})}
                 required
@@ -241,16 +233,16 @@ const EmployeesPage = () => {
           </div>
 
           {modalMode === 'create' && (
-             <div style={{ padding: '15px', backgroundColor: 'var(--bg-surface)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', marginBottom: '20px' }}>
-               <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+             <div className="p-4 bg-surface rounded-sm border border-border mb-5">
+               <div className="text-[0.85rem] text-text-secondary">
                  <strong>Catatan:</strong> Akun login akan menggunakan NIP sebagai username, dan password default `dexa2026`. Karyawan wajib mengubah password saat login pertama kali.
                </div>
              </div>
           )}
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
-             <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>Batal</button>
-             <button type="submit" className="btn-primary" disabled={formLoading}>
+          <div className="flex justify-end gap-2.5 mt-2.5">
+             <button type="button" className="bg-surface text-text-primary border border-border px-6 py-2.5 rounded-md font-medium transition-all duration-250 hover:bg-hover hover:border-text-muted" onClick={() => setIsModalOpen(false)}>Batal</button>
+             <button type="submit" className="bg-primary text-white border-none px-6 py-2.5 rounded-md font-medium text-[0.95rem] transition-all duration-250 inline-flex items-center justify-center gap-2 shadow-[0_2px_10px_rgba(59,130,246,0.2)] hover:bg-primary-hover hover:shadow-glow hover:-translate-y-px active:translate-y-px disabled:opacity-50 disabled:cursor-not-allowed" disabled={formLoading}>
                {formLoading ? 'Menyimpan...' : 'Simpan Data'}
              </button>
           </div>

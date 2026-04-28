@@ -47,7 +47,7 @@ const AttendanceMonitorPage = () => {
     if (currentPage === 1) {
       fetchAttendances(1);
     } else {
-      setCurrentPage(1); // this will trigger the useEffect
+      setCurrentPage(1);
     }
   };
 
@@ -55,89 +55,88 @@ const AttendanceMonitorPage = () => {
     setFilterDate('');
     setFilterEmployeeId('');
     if (currentPage === 1) {
-      setTimeout(() => fetchAttendances(1), 0); // Need settimeout to allow state to clear before fetch in some cases, though not strictly needed here if we rely on useEffect, but wait, setting state doesnt immediately apply in this closure!
+      setTimeout(() => fetchAttendances(1), 0);
     } else {
       setCurrentPage(1);
     }
   };
 
+  const inputClasses = "w-full py-2 px-3 bg-main border border-border rounded-md text-text-primary font-[inherit] text-[0.95rem] transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)] focus:outline-none focus:border-primary focus:shadow-[0_0_0_3px_var(--color-border-focus)] placeholder:text-text-muted";
+
   const columns = [
     { 
       header: 'Tanggal', 
       accessor: 'attendanceDate',
-      render: (row) => <span style={{ fontWeight: 500 }}>{dayjs(row.attendanceDate).format('DD MMM YYYY')}</span>
+      render: (row) => <span className="font-medium">{dayjs(row.attendanceDate).format('DD MMM YYYY')}</span>
     },
     { 
       header: 'Karyawan', 
       accessor: 'employee',
       render: (row) => (
         <div>
-          <div style={{ fontWeight: 600 }}>{row.employee?.name || 'Unknown'}</div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>NIP: {row.employee?.nip}</div>
+          <div className="font-semibold">{row.employee?.name || 'Unknown'}</div>
+          <div className="text-[0.8rem] text-text-secondary">NIP: {row.employee?.nip}</div>
         </div>
       )
     },
-    { header: 'Clock In', accessor: 'clockIn', render: (row) => <span style={{ color: 'var(--success-color)', fontWeight: 600 }}>{row.clockIn}</span> },
-    { header: 'Clock Out', accessor: 'clockOut', render: (row) => row.clockOut ? <span style={{ color: 'var(--warning-color)', fontWeight: 600 }}>{row.clockOut}</span> : <span className="badge badge-info">Masih Bekerja</span> },
+    { header: 'Clock In', accessor: 'clockIn', render: (row) => <span className="text-success font-semibold">{row.clockIn}</span> },
+    { header: 'Clock Out', accessor: 'clockOut', render: (row) => row.clockOut ? <span className="text-warning font-semibold">{row.clockOut}</span> : <span className="px-2.5 py-1 rounded-full text-[0.75rem] font-semibold tracking-wide bg-primary/15 text-primary border border-primary/30">Masih Bekerja</span> },
     { 
       header: 'Foto WFH',
       accessor: 'photoUrl',
       render: (row) => (
         row.photoUrl ? (
           <button 
-            className="btn-secondary" 
-            style={{ padding: '6px 12px', fontSize: '0.85rem' }}
+            className="bg-surface text-text-primary border border-border px-3 py-1.5 rounded-md font-medium text-[0.85rem] transition-all duration-250 hover:bg-hover hover:border-text-muted inline-flex items-center gap-1.5"
             onClick={() => setPhotoUrl(`http://localhost:3001${row.photoUrl}`)}
           >
             <FiImage /> Lihat Foto
           </button>
-        ) : <span style={{ color: 'var(--text-muted)' }}>Tidak ada data</span>
+        ) : <span className="text-text-muted">Tidak ada data</span>
       )
     },
-    { header: 'Status', accessor: 'status', render: (row) => <span className="badge badge-success">{row.status}</span> },
-    { header: 'Catatan', accessor: 'notes', render: (row) => <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{row.notes || '-'}</span> },
+    { header: 'Status', accessor: 'status', render: (row) => <span className="px-2.5 py-1 rounded-full text-[0.75rem] font-semibold tracking-wide bg-success/15 text-success border border-success/30">{row.status}</span> },
+    { header: 'Catatan', accessor: 'notes', render: (row) => <span className="text-[0.9rem] text-text-secondary">{row.notes || '-'}</span> },
   ];
 
   return (
-    <div className="content-wrap">
-      <div className="page-header" style={{ marginBottom: '30px' }}>
+    <div className="flex-1 py-8 px-[5%] max-w-[1400px] mx-auto w-full">
+      <div className="mb-8 flex justify-between items-center">
         <div>
-          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <FiActivity color="var(--primary-color)" /> Monitoring Absensi
+          <h1 className="text-[1.8rem] font-semibold tracking-tight flex items-center gap-2.5">
+            <FiActivity className="text-primary" /> Monitoring Absensi
           </h1>
-          <p style={{ color: 'var(--text-secondary)', marginTop: '5px' }}>Semua pergerakan absensi WFH karyawan terekam di sini.</p>
+          <p className="text-text-secondary mt-1">Semua pergerakan absensi WFH karyawan terekam di sini.</p>
         </div>
       </div>
 
-      <div className="glass-panel animate-fade-in" style={{ padding: '20px', marginBottom: '30px' }}>
-         <form onSubmit={handleFilterSubmit} style={{ display: 'flex', gap: '15px', alignItems: 'flex-end' }}>
-            <div style={{ flex: 1, maxWidth: '200px' }}>
-              <label className="form-label" style={{ fontSize: '0.85rem' }}>Tanggal</label>
+      <div className="bg-card backdrop-blur-[12px] border border-border shadow-main rounded-lg p-5 mb-8 animate-fade-in">
+         <form onSubmit={handleFilterSubmit} className="flex gap-4 items-end">
+            <div className="flex-1 max-w-[200px]">
+              <label className="block mb-2 text-[0.85rem] font-medium text-text-secondary">Tanggal</label>
               <input 
                 type="date" 
-                className="form-control" 
-                style={{ padding: '8px 12px' }}
+                className={inputClasses}
                 value={filterDate}
                 onChange={(e) => setFilterDate(e.target.value)}
               />
             </div>
-            <div style={{ flex: 1, maxWidth: '200px' }}>
-              <label className="form-label" style={{ fontSize: '0.85rem' }}>ID Karyawan</label>
+            <div className="flex-1 max-w-[200px]">
+              <label className="block mb-2 text-[0.85rem] font-medium text-text-secondary">ID Karyawan</label>
               <input 
                 type="number" 
-                className="form-control" 
+                className={inputClasses}
                 placeholder="Misal: 1"
-                style={{ padding: '8px 12px' }}
                 value={filterEmployeeId}
                 onChange={(e) => setFilterEmployeeId(e.target.value)}
               />
             </div>
-            <div style={{ display: 'flex', gap: '10px' }}>
-               <button type="submit" className="btn-primary" style={{ padding: '8px 20px' }}>
+            <div className="flex gap-2.5">
+               <button type="submit" className="bg-primary text-white border-none px-5 py-2 rounded-md font-medium transition-all duration-250 inline-flex items-center gap-2 hover:bg-primary-hover hover:shadow-glow hover:-translate-y-px">
                  <FiSearch /> Filter
                </button>
                {(filterDate || filterEmployeeId) && (
-                  <button type="button" className="btn-secondary" style={{ padding: '8px 20px' }} onClick={handleClearFilters}>
+                  <button type="button" className="bg-surface text-text-primary border border-border px-5 py-2 rounded-md font-medium transition-all duration-250 hover:bg-hover hover:border-text-muted" onClick={handleClearFilters}>
                      Reset
                   </button>
                )}
@@ -145,7 +144,7 @@ const AttendanceMonitorPage = () => {
          </form>
       </div>
 
-      <div className="glass-panel animate-fade-in" style={{ padding: '30px', animationDelay: '0.1s' }}>
+      <div className="bg-card backdrop-blur-[12px] border border-border shadow-main rounded-lg p-8 animate-fade-in [animation-delay:0.1s]">
         <DataTable 
           columns={columns} 
           data={data} 
@@ -161,9 +160,9 @@ const AttendanceMonitorPage = () => {
         onClose={() => setPhotoUrl(null)}
         title="Foto Bukti WFH"
       >
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="flex justify-center">
            {photoUrl && (
-             <img src={photoUrl} alt="Bukti WFH" style={{ maxWidth: '100%', borderRadius: 'var(--radius-sm)' }} />
+             <img src={photoUrl} alt="Bukti WFH" className="max-w-full rounded-sm" />
            )}
         </div>
       </Modal>
