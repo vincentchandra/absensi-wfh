@@ -1,6 +1,6 @@
-# Dexa Group - Fullstack WFH Attendance System
+# Fullstack WFH Attendance System
 
-This repository contains the Fullstack Developer Skill Test assignment for Dexa Group. It is a completely modular HRIS Web Application focused on Work-From-Home employee attendance, equipped with role-based security barriers, automated database scaling, and photo capturing functionalities.
+This is a completely modular HRIS Web Application focused on Work-From-Home employee attendance, equipped with role-based security barriers, automated database scaling, and photo capturing functionalities.
 
 ## 💻 Technology Stack
 
