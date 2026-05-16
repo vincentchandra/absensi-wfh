@@ -1,0 +1,5 @@
+/* Clean out default vite styles */
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
